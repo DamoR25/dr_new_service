@@ -1,0 +1,30 @@
+---
+- name: Windows Service Status
+  hosts: all
+  tasks:
+    - name: Check Service Print Spooler - Spooler
+      win_command: powershell.exe "$ServiceName = 'Spooler'
+                    $arrService = Get-Service -Name $ServiceName
+
+					while ($arrService.Status -ne 'Running')
+					{
+
+					Start-Service $ServiceName
+					write-host $arrService.status
+					write-host 'Service starting'
+					Start-Sleep -seconds 60
+					$arrService.Refresh()
+					if ($arrService.Status -eq 'Running')
+					{
+					Write-Host 'Service is now Running'
+					}
+
+                    }"
+      register: status
+    - name: Print the service status
+      debug:
+        msg: "{{ status.stdout_lines}}"
+    - name: Print value
+      debug:
+        var: my_var
+ 
